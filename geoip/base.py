@@ -13,7 +13,7 @@ from prototypes import (
     GeoIP_record_by_addr_v6, GeoIP_country_code_by_addr_v6,
     GeoIP_country_name_by_addr_v6
     # GeoIPRecord, GeoIPTag
-    )
+)
 
 #from django.utils import six
 # swap six.string_types => basestring
@@ -47,7 +47,7 @@ class GeoIP(object):
     #        databases, GEOIP_INDEX_CACHE is equivalent to GEOIP_MEMORY_CACHE
     #
     # GEOIP_MMAP_CACHE - load database into mmap shared memory ( not available
-    #       on Windows).
+    #        on Windows).
     GEOIP_STANDARD = 0
     GEOIP_MEMORY_CACHE = 1
     GEOIP_CHECK_CACHE = 2
@@ -63,10 +63,8 @@ class GeoIP(object):
     _city = None
     _country = None
 
-    def __init__(self, path=None, cache=0,
-            country=None, city=None,
-            country_v6=None, city_v6=None,
-            **kw):
+    def __init__(self, path=None, cache=0, country=None, city=None,
+                 country_v6=None, city_v6=None, **kw):
         """
         Initializes the GeoIP object, no parameters are required to use default
         settings.  Keyword arguments may be passed in to customize the
@@ -91,7 +89,7 @@ class GeoIP(object):
             'GeoLiteCity.dat'; overrides the GEOIP_CITY settings attribute.
 
         * v6: The name of the IPv6 city data file. Defaults to
-            'GeoIPv6.dat'; overrides the GEOIP_V6 settings attibute.
+            'GeoIPv6.dat'; overrides the GEOIP_V6 settings attribute.
         """
         # Checking the given cache option.
         if cache in self.cache_options:
@@ -103,8 +101,8 @@ class GeoIP(object):
         if not path:
             path = GEOIP_SETTINGS.get('GEOIP_PATH', None)
             if not path:
-                raise GeoIPException('GeoIP path must be provided'
-                        ' via parameter or the GEOIP_PATH setting.')
+                raise GeoIPException('GeoIP path must be provided via '
+                                     'parameter or the GEOIP_PATH setting.')
         if not isinstance(path, basestring):
             raise TypeError('Invalid path type: %s' % type(path).__name__)
 
@@ -113,25 +111,29 @@ class GeoIP(object):
             # dictionary.  If the database files for the GeoLite country
             # and/or city datasets exist, then try and open them.
             country_db = os.path.join(path, country or
-                    GEOIP_SETTINGS.get('GEOIP_COUNTRY', 'GeoIP.dat'))
+                                      GEOIP_SETTINGS.get('GEOIP_COUNTRY',
+                                                         'GeoIP.dat'))
             if os.path.isfile(country_db):
                 self._country = GeoIP_open(country_db, cache)
                 self._country_file = country_db
 
             city_db = os.path.join(path, city or
-                    GEOIP_SETTINGS.get('GEOIP_CITY', 'GeoLiteCity.dat'))
+                                   GEOIP_SETTINGS.get('GEOIP_CITY',
+                                                      'GeoLiteCity.dat'))
             if os.path.isfile(city_db):
                 self._city = GeoIP_open(city_db, cache)
                 self._city_file = city_db
 
             city_v6_db = os.path.join(path, city_v6 or
-                    GEOIP_SETTINGS.get('GEOIP_CITY_V6', 'GeoLiteCityv6.dat'))
+                                      GEOIP_SETTINGS.get('GEOIP_CITY_V6',
+                                                         'GeoLiteCityv6.dat'))
             if os.path.isfile(city_v6_db):
                 self._city_v6 = GeoIP_open(city_v6_db, cache)
                 self._city_v6_file = city_v6_db
 
             country_v6_db = os.path.join(path, country_v6 or
-                    GEOIP_SETTINGS.get('GEOIP_COUNTRY_V6', 'GeoIPv6.dat'))
+                                         GEOIP_SETTINGS.get('GEOIP_COUNTRY_V6',
+                                                            'GeoIPv6.dat'))
             if os.path.isfile(country_v6_db):
                 self._country_v6 = GeoIP_open(country_v6_db, cache)
                 self._country_v6_file = country_v6_db
@@ -152,10 +154,10 @@ class GeoIP(object):
                 self._country_file = path
             else:
                 raise GeoIPException('Unable to recognize database '
-                    'edition: %s' % info)
+                                     'edition: %s' % info)
         else:
-            raise GeoIPException('GeoIP path must be a valid file '
-                'or directory.')
+            raise GeoIPException('GeoIP path must be a valid file or '
+                                 'directory.')
         # get libgeip from libgeoip
 
     def _is_addr(self, string):
@@ -183,12 +185,12 @@ class GeoIP(object):
             GeoIP_delete(self._country_v6)
 
     def _check_query(self, query, country=False, city=False,
-            city_or_country=False):
-        "Helper routine for checking the query and database availability."
+                     city_or_country=False):
+        """Helper routine for checking the query and database availability."""
         # Making sure a string was passed in for the query.
         if not isinstance(query, basestring):
             raise TypeError('GeoIP query must be a string, not type %s' %
-                    type(query).__name__)
+                            type(query).__name__)
 
         # GeoIP only takes ASCII-encoded strings.
         query = query.encode('ascii')
@@ -198,10 +200,10 @@ class GeoIP(object):
             raise GeoIPException('Invalid GeoIP country and city data files.')
         elif country and not self._country:
             raise GeoIPException('Invalid GeoIP country data file: %s' %
-                    self._country_file)
+                                 self._country_file)
         elif city and not self._city:
             raise GeoIPException('Invalid GeoIP city data file: %s' %
-                    self._city_file)
+                                 self._city_file)
 
         # Return the query string back to the caller.
         return query
@@ -223,7 +225,7 @@ class GeoIP(object):
             return GeoIP_record_by_name(self._city, c_char_p(query))
 
     def country_code(self, query):
-        "Returns the country code for the given IP Address or FQDN."
+        """Returns the country code for the given IP Address or FQDN."""
         query = self._check_query(query, city_or_country=True)
         if self._country:
             if self._is_v4(query):
@@ -236,7 +238,7 @@ class GeoIP(object):
             return self.city(query)['country_code']
 
     def country_name(self, query):
-        "Returns the country name for the given IP Address or FQDN."
+        """Returns the country name for the given IP Address or FQDN."""
         query = self._check_query(query, city_or_country=True)
         if self._country:
             if self._is_v4(query):
@@ -255,9 +257,10 @@ class GeoIP(object):
         '24.124.1.80' and 'djangoproject.com' are valid parameters.
         """
         # Returning the country code and name
-        return {'country_code': self.country_code(query),
-                'country_name': self.country_name(query),
-                }
+        return {
+            'country_code': self.country_code(query),
+            'country_name': self.country_name(query),
+        }
 
     #### Coordinate retrieval routines ####
     def coords(self, query, ordering=('longitude', 'latitude')):
@@ -268,15 +271,15 @@ class GeoIP(object):
             return tuple(cdict[o] for o in ordering)
 
     def lon_lat(self, query):
-        "Returns a tuple of the (longitude, latitude) for the given query."
+        """Returns a tuple of the (longitude, latitude) for the given query."""
         return self.coords(query)
 
     def lat_lon(self, query):
-        "Returns a tuple of the (latitude, longitude) for the given query."
+        """Returns a tuple of the (latitude, longitude) for the given query."""
         return self.coords(query, ('latitude', 'longitude'))
 
     def geos(self, query):
-        "Returns a GEOS Point object for the given query."
+        """Returns a GEOS Point object for the given query."""
         ll = self.lon_lat(query)
         if ll:
             from django.contrib.gis.geos import Point
@@ -287,7 +290,7 @@ class GeoIP(object):
     #### GeoIP Database Information Routines ####
     @property
     def country_info(self):
-        "Returns information about the GeoIP country database."
+        """Returns information about the GeoIP country database."""
         if self._country is None:
             ci = 'No GeoIP Country data in "%s"' % self._country_file
         else:
@@ -296,7 +299,7 @@ class GeoIP(object):
 
     @property
     def city_info(self):
-        "Retuns information about the GeoIP city database."
+        """Retuns information about the GeoIP city database."""
         if self._city is None:
             ci = 'No GeoIP City data in "%s"' % self._city_file
         else:
@@ -305,12 +308,12 @@ class GeoIP(object):
 
     @property
     def info(self):
-        "Returns information about the GeoIP library and databases in use."
+        """Returns information about the GeoIP library and databases in use."""
         info = ''
         if GeoIP_lib_version:
             info += 'GeoIP Library:\n\t%s\n' % GeoIP_lib_version()
         return info + 'Country:\n\t%s\nCity:\n\t%s' % (self.country_info,
-                self.city_info)
+                                                       self.city_info)
 
     #### Methods for compatibility w/the GeoIP-Python API. ####
     @classmethod

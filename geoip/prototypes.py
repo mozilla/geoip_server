@@ -5,28 +5,30 @@ from libgeoip import lgeoip, free
 
 
 class GeoIPRecord(Structure):
-    _fields_ = [('country_code', c_char_p),
-                ('country_code3', c_char_p),
-                ('country_name', c_char_p),
-                ('region', c_char_p),
-                ('city', c_char_p),
-                ('postal_code', c_char_p),
-                ('latitude', c_float),
-                ('longitude', c_float),
-                # TODO: In 1.4.6 this changed from `int dma_code;` to
-                # `union {int metro_code; int dma_code;};`.  Change
-                # to a `ctypes.Union` in to accomodate in future when
-                # pre-1.4.6 versions are no longer distributed.
-                ('dma_code', c_int),
-                ('area_code', c_int),
-                ('charset', c_int),
-                ('continent_code', c_char_p),
-                ]
-geoip_char_fields = [name for name,
-        ctype in GeoIPRecord._fields_ if ctype is c_char_p]
-geoip_encodings = {0: 'iso-8859-1',
-                   1: 'utf8',
-                  }
+    _fields_ = [
+        ('country_code', c_char_p),
+        ('country_code3', c_char_p),
+        ('country_name', c_char_p),
+        ('region', c_char_p),
+        ('city', c_char_p),
+        ('postal_code', c_char_p),
+        ('latitude', c_float),
+        ('longitude', c_float),
+        # TODO: In 1.4.6 this changed from `int dma_code;` to
+        # `union {int metro_code; int dma_code;};`.  Change
+        # to a `ctypes.Union` in to accomodate in future when
+        # pre-1.4.6 versions are no longer distributed.
+        ('dma_code', c_int),
+        ('area_code', c_int),
+        ('charset', c_int),
+        ('continent_code', c_char_p),
+    ]
+geoip_char_fields = [name for name, ctype in GeoIPRecord._fields_
+                     if ctype is c_char_p]
+geoip_encodings = {
+    0: 'iso-8859-1',
+    1: 'utf8',
+}
 
 
 class GeoIPTag(Structure):
@@ -77,6 +79,8 @@ def record_output(func):
     func.restype = RECTYPE
     func.errcheck = check_record
     return func
+
+
 GeoIP_record_by_addr = record_output(lgeoip.GeoIP_record_by_addr)
 GeoIP_record_by_addr_v6 = record_output(lgeoip.GeoIP_record_by_addr_v6)
 GeoIP_record_by_name = record_output(lgeoip.GeoIP_record_by_name)
@@ -115,9 +119,9 @@ def string_output(func):
 
 GeoIP_country_code_by_addr = string_output(lgeoip.GeoIP_country_code_by_addr)
 GeoIP_country_code_by_addr_v6 = \
-        string_output(lgeoip.GeoIP_country_code_by_addr_v6)
+    string_output(lgeoip.GeoIP_country_code_by_addr_v6)
 GeoIP_country_code_by_name = string_output(lgeoip.GeoIP_country_code_by_name)
 GeoIP_country_name_by_addr = string_output(lgeoip.GeoIP_country_name_by_addr)
 GeoIP_country_name_by_addr_v6 = \
-        string_output(lgeoip.GeoIP_country_name_by_addr_v6)
+    string_output(lgeoip.GeoIP_country_name_by_addr_v6)
 GeoIP_country_name_by_name = string_output(lgeoip.GeoIP_country_name_by_name)

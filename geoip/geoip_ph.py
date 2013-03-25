@@ -41,11 +41,11 @@ class GeoServer():
         self.config = settings
 
         self.log = logging.getLogger()
-        self.log.info('Starting GeoServer instance...');
+        self.log.info('Starting GeoServer instance...')
         try:
             self.geoip = GeoIP(path=self.config.GEOIP_PATH,
-                cache=GeoIP.GEOIP_MEMORY_CACHE)
-        except GeoIPException, e:
+                               cache=GeoIP.GEOIP_MEMORY_CACHE)
+        except GeoIPException as e:
             self.log.error("Could not start GeoIP server: %s", str(e))
 
     def _error(self, errstr):
@@ -63,7 +63,7 @@ class GeoServer():
         try:
             if self.geoip.country_code('mozilla.org') == 'US':
                 return "200 OK\n"
-        except Exception, e:
+        except Exception as e:
             self.log.error("Failed Health Check: %s", str(e))
             return "500 Error\n"
 
@@ -101,7 +101,7 @@ class GeoServer():
                 success_counter += 1
                 reply.update({'addr': addr})
                 return self._return('success', reply)
-            except Exception, e:
+            except Exception as e:
                 fail_counter += 1
                 return self._error('Unknown Exception "%s"' % str(e))
         finally:
@@ -110,6 +110,7 @@ class GeoServer():
 
 
 geo = GeoServer()
+
 
 def lookup(data):
     return geo.process(data)
@@ -126,8 +127,7 @@ if __name__ == "__main__":
             if hasattr(settings, i):
                 print 'loading %s = %s' % (i, getattr(settings, i))
                 os.environ[i] = str(getattr(settings, i))
-    except ImportError, e:
+    except ImportError as e:
         print "Cannot run. Terminating."
         print str(e)
         exit(-1)
-

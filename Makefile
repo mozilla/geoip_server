@@ -1,10 +1,7 @@
 APPNAME = geoip
-VE = virtualenv
-PY = bin/python
-PI = bin/pip
-NO = bin/nosetests -s --with-xunit
+NO = nosetests -s --with-xunit
 
-all: build fetch
+all: fetch
 
 # Note:
 # Unfortunately, this may fail with a 503 error. If that's the case, you
@@ -44,12 +41,5 @@ data/GeoLiteCity.dat:
 	gzip -d data/GeoLiteCity.dat
 	cd -
 
-build:
-	$(VE) --no-site-packages .
-	$(PI) install -r prod-reqs.txt
-	$(PY) setup.py build
-	@echo "Run 'make fetch' to fetch GeoIP data."
-
 test:
 	$(NO) $(APPNAME)
-

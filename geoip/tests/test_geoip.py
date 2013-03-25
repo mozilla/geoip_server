@@ -1,7 +1,6 @@
 import json
 import unittest
 
-from StringIO import StringIO
 from geoip.geoip_ph import GeoServer
 
 
@@ -18,8 +17,9 @@ class TestGeoServer(unittest.TestCase):
 
     def test_valid(self):
         for address in ['63.245.217.20', '2620:101:8008:5::2:7']:
-            value = self.server.process(AsObj(**{'data':
-                'get %s\n' % address}))
+            value = self.server.process(AsObj(**{
+                'data': 'get %s\n' % address
+            }))
             resp = json.loads(value)
             self.failUnless('success' in resp)
             self.failUnlessEqual(resp['success']['country_code'], 'US')

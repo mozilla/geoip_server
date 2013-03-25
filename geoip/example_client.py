@@ -24,5 +24,5 @@ if __name__ == '__main__':
     for i in xrange(0, 10000):
         # Get a random address
         addr = "GET %s.%s.%s.%s" % (randrange(0, 255), randrange(0, 255),
-                randrange(0, 255), randrange(0, 255))
+                                    randrange(0, 255), randrange(0, 255))
         pprint(client.fetch(addr))

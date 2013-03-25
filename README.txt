@@ -31,4 +31,3 @@ preferred local package manager:
 
 libevent-dev
 libgeoip-dev
-

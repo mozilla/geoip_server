@@ -1,1 +1,2 @@
-bin/circusd conf/circus.ini
+#!/bin/bash
+circusd conf/circus.ini
